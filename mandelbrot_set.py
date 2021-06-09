@@ -8,7 +8,9 @@ Created on Sat Jun  5 10:48:43 2021
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import cProfile
 
+cProfile.run('mandelbrot_set.py')
 
 def arithmetic(z, c):
     try:
@@ -29,38 +31,38 @@ def normalize(max_value, value):
     return real, comp
 
     
-N = 2e8
+N = 2e4
 size = 4000
 maximum = 2
 minimum = -1.5
 image = np.ones((size, size))*1000
 t_1 = time.time()
 
+value = np.linspace(minimum, maximum, int(N))
 
 for i in range(int(N)):
-    comp_number = 0
-    iteration = 0
- 
-    real = gen_random_number(maximum, minimum)
-    comp = gen_random_number(maximum, minimum)
-    starting_number = complex(real, comp)
-    
+    for j in range(int(N)):
+        comp_number = 0
+        iteration = 0
+     
+        starting_number = complex(value[i], value[j])
         
-    while comp_number.real <= 2 and comp_number.imag <= 2:
-        
-        comp_number = arithmetic(comp_number, starting_number)
             
-        if iteration == 1000:
-            x, y = normalize(size, starting_number)
-            image[y, x] = 0
-            break
-        
-        iteration += 1
-        
-        
-    if iteration >= 100:
-         x, y = normalize(size, starting_number)
-         image[y, x] = 1000 - iteration
+        while comp_number.real <= 2 and comp_number.imag <= 2:
+            
+            comp_number = arithmetic(comp_number, starting_number)
+                
+            if iteration == 1000:
+                x, y = normalize(size, starting_number)
+                image[y, x] = 0
+                break
+            
+            iteration += 1
+            
+            
+        if iteration >= 100:
+             x, y = normalize(size, starting_number)
+             image[y, x] = 1000 - iteration
 
      
 plt.imshow(image, cmap='nipy_spectral')
